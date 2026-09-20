@@ -7,7 +7,7 @@ const mysql = require('mysql2/promise');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
-const pool = mysql.createPool({
+const poolConfig = {
   host: process.env.DB_HOST || '127.0.0.1',
   port: parseInt(process.env.DB_PORT, 10) || 3306,
   user: process.env.DB_USER || 'root',
@@ -16,8 +16,14 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  dateStrings: true // Returns MySQL DATE/DATETIME as strings to prevent timezone shifts
-});
+  dateStrings: true
+};
+
+if (process.env.DB_SSL === 'true' || process.env.MYSQL_SSL === 'true') {
+  poolConfig.ssl = { rejectUnauthorized: false };
+}
+
+const pool = mysql.createPool(poolConfig);
 
 // Helper for executing a query directly from the pool
 const query = async (sql, params = []) => {

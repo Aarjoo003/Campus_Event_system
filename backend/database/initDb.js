@@ -20,6 +20,10 @@ const dbConfig = {
   multipleStatements: true
 };
 
+if (process.env.DB_SSL === 'true' || process.env.MYSQL_SSL === 'true') {
+  dbConfig.ssl = { rejectUnauthorized: false };
+}
+
 async function initializeDatabase() {
   console.log('----------------------------------------------------');
   console.log('Campus Event Management System - Database Initializer');
