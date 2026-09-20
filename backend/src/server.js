@@ -63,6 +63,7 @@ if (process.env.NODE_ENV === 'development') {
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
+    version: '1.0.1',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
     service: 'Campus Event Management System API'
@@ -127,6 +128,7 @@ app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Campus Event Management System API is live!',
+    version: '1.0.1',
     endpoints: {
       health: '/api/health',
       events: '/api/events',
