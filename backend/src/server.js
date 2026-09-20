@@ -122,15 +122,28 @@ app.all('/api/setup-database', async (req, res) => {
   }
 });
 
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/events', eventRoutes);
-app.use('/api/registrations', registrationRoutes);
-app.use('/api/admin', adminRoutes);
+// Root Endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Campus Event Management System API is live!',
+    endpoints: {
+      health: '/api/health',
+      events: '/api/events',
+      auth: '/api/auth'
+    }
+  });
+});
+
+// API Routes (Mounted on both /api/... and /... for maximum frontend compatibility)
+app.use(['/api/auth', '/auth'], authRoutes);
+app.use(['/api/events', '/events'], eventRoutes);
+app.use(['/api/registrations', '/registrations'], registrationRoutes);
+app.use(['/api/admin', '/admin'], adminRoutes);
 
 // Direct alias for GET /api/my-events (as defined in REST spec)
 app.get(
-  '/api/my-events',
+  ['/api/my-events', '/my-events'],
   authenticateToken,
   authorizeRoles('STUDENT', 'ADMIN'),
   registrationController.getMyEvents
