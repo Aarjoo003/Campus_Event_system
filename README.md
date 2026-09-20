@@ -473,23 +473,3 @@ A pre-configured Postman collection is included at:
 4. When you execute any login request (**Student Login**, **Organizer Login**, or **Admin Login**), the test script **automatically captures the JWT token** and stores it in the collection variable `token` for subsequent authenticated calls.
 
 ---
-
-## 13. Technical Interview Concepts Explained
-
-When discussing this project in technical interviews, you can highlight:
-
-### 1. Frontend Architecture
-- **Vite & React 18**: Fast Hot Module Replacement (HMR) and optimized ES module bundling.
-- **Context API (`AuthContext`)**: Centralized authentication state, persistent session synchronization with `localStorage`, and role-based helper methods (`hasRole`).
-- **Axios Interceptors**: Clean separation of API concerns; request interceptor attaches the Bearer token dynamically; response interceptor detects expired 401 tokens and handles graceful redirection.
-- **Protected Routing**: Role-Aware `<ProtectedRoute>` preventing unauthorized route access on the client side while handling deep redirects via query parameters (`?redirect=...`).
-
-### 2. Backend & REST API Design
-- **Layered Architecture**: Clear separation between `routes/` (URL definitions and validations), `controllers/` (HTTP request handling and response codes), `models/` (pure database SQL queries), and `middleware/` (authentication and authorization).
-- **Security**: Passwords hashed using `bcrypt` (10 salt rounds); tamper-proof JWT tokens with expiration dates; CORS origin restriction.
-- **Input Validation**: Schema validation using `express-validator` to reject malformed inputs before reaching database queries.
-
-### 3. Database & MySQL Optimization
-- **Relational Integrity**: 3NF database schema with primary keys, foreign keys, and indexes on frequent search/filter columns (`event_date`, `status`, `category_id`, `organizer_id`).
-- **Concurrency & ACID Transactions**: During seat registration, a transaction (`START TRANSACTION` with `FOR UPDATE`) locks the event record to atomically check deadline and capacity limits, avoiding double-booking race conditions.
-- **Dynamic Calculation**: Rather than relying on a fragile cached counter column that can drift, available seats are dynamically computed from active `CONFIRMED` registrations.
