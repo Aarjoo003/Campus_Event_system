@@ -13,6 +13,13 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Quick fill helper
+  const handleQuickFill = (roleEmail) => {
+    setEmail(roleEmail);
+    setPassword('password123');
+    setError('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -58,6 +65,31 @@ export default function LoginPage() {
           <p className="mt-2 text-xs sm:text-sm text-slate-500">
             Sign in to access your campus event portal and registrations
           </p>
+        </div>
+
+        {/* Demo Fast Login Buttons */}
+        <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2 rounded-2xl border border-slate-200">
+          <button
+            type="button"
+            onClick={() => handleQuickFill('student1@campus.edu')}
+            className="py-2 px-2 bg-white hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-sm transition-colors text-center"
+          >
+            Student
+          </button>
+          <button
+            type="button"
+            onClick={() => handleQuickFill('tech.club@campus.edu')}
+            className="py-2 px-2 bg-white hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-sm transition-colors text-center"
+          >
+            Organizer
+          </button>
+          <button
+            type="button"
+            onClick={() => handleQuickFill('admin@campus.edu')}
+            className="py-2 px-2 bg-white hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-sm transition-colors text-center"
+          >
+            Admin
+          </button>
         </div>
 
         {/* Error Alert */}
