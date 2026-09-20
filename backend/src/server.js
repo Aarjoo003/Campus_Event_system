@@ -69,6 +69,59 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// One-Time Cloud Database Setup Endpoint (Protected by secret key)
+app.all('/api/setup-database', async (req, res) => {
+  const key = req.query.secret || req.headers['x-setup-key'];
+  const expectedKey = process.env.JWT_SECRET || 'super_secret_jwt_key_campus_events_2026_jwt_token';
+
+  if (!key || key !== expectedKey) {
+    return res.status(403).json({ success: false, message: 'Invalid or missing setup secret key.' });
+  }
+
+  const fs = require('fs');
+  const mysql = require('mysql2/promise');
+  let connection;
+  try {
+    const poolConfig = {
+      host: process.env.DB_HOST || '127.0.0.1',
+      port: parseInt(process.env.DB_PORT, 10) || 3306,
+      user: process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD || '',
+      database: process.env.DB_NAME || 'campus_events_db',
+      multipleStatements: true
+    };
+    if (process.env.DB_SSL === 'true' || process.env.MYSQL_SSL === 'true') {
+      poolConfig.ssl = { rejectUnauthorized: false };
+    }
+
+    connection = await mysql.createConnection(poolConfig);
+
+    const schemaPath = path.join(__dirname, '../database/schema.sql');
+    const seedPath = path.join(__dirname, '../database/seed.sql');
+
+    const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+    const seedSql = fs.readFileSync(seedPath, 'utf8');
+
+    await connection.query(schemaSql);
+    await connection.query(seedSql);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Database schema and seed data initialized successfully!',
+      database: process.env.DB_NAME || 'campus_events_db'
+    });
+  } catch (error) {
+    console.error('Setup error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to initialize database.',
+      error: error.message
+    });
+  } finally {
+    if (connection) await connection.end();
+  }
+});
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);

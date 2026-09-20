@@ -36,6 +36,14 @@ async function initializeDatabase() {
     connection = await mysql.createConnection(dbConfig);
     console.log(' Connected to MySQL server successfully.');
 
+    const targetDb = process.env.DB_NAME || 'campus_events_db';
+    try {
+      await connection.query(`CREATE DATABASE IF NOT EXISTS \`${targetDb}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
+    } catch (e) {
+      // Cloud databases like Aiven defaultdb might not allow CREATE DATABASE, which is normal
+    }
+    await connection.query(`USE \`${targetDb}\`;`);
+
     // 2. Read schema.sql and execute
     const schemaPath = path.join(__dirname, 'schema.sql');
     console.log(`\n Reading and executing schema: ${schemaPath}`);

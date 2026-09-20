@@ -1,7 +1,7 @@
 -- ====================================================================
 -- Campus Event Management System - Seed Data
--- ====================================================================
-USE campus_events_db;
+-- Seed data into currently active connected database
+
 
 -- --------------------------------------------------------------------
 -- 1. Insert Categories

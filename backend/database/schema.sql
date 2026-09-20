@@ -3,12 +3,8 @@
 -- Compatible with MySQL 8.0+ and 9.x
 -- ====================================================================
 
--- Create Database if it doesn't already exist
-CREATE DATABASE IF NOT EXISTS campus_events_db
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
+-- Create tables in currently active connected database
 
-USE campus_events_db;
 
 -- --------------------------------------------------------------------
 -- 1. Users Table
