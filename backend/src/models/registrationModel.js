@@ -66,8 +66,8 @@ const registrationModel = {
         } else {
           // Reactivate previously cancelled registration
           await conn.execute(
-            'UPDATE registrations SET status = "CONFIRMED", registered_at = CURRENT_TIMESTAMP WHERE id = ?',
-            [existing[0].id]
+            'UPDATE registrations SET status = ?, registered_at = CURRENT_TIMESTAMP WHERE id = ?',
+            ['CONFIRMED', existing[0].id]
           );
           await conn.commit();
           return { success: true, registrationId: existing[0].id, reconfirmed: true };
@@ -76,8 +76,8 @@ const registrationModel = {
 
       // 5. Insert new confirmed registration
       const [insertResult] = await conn.execute(
-        'INSERT INTO registrations (student_id, event_id, status) VALUES (?, ?, "CONFIRMED")',
-        [studentId, eventId]
+        'INSERT INTO registrations (student_id, event_id, status) VALUES (?, ?, ?)',
+        [studentId, eventId, 'CONFIRMED']
       );
 
       await conn.commit();
@@ -108,8 +108,8 @@ const registrationModel = {
     }
 
     await query(
-      'UPDATE registrations SET status = "CANCELLED" WHERE id = ?',
-      [registrations[0].id]
+      'UPDATE registrations SET status = ? WHERE id = ?',
+      ['CANCELLED', registrations[0].id]
     );
 
     return { success: true };

@@ -1,7 +1,11 @@
 import axios from 'axios';
 
 // Automatically ensure /api suffix regardless of how VITE_API_URL was entered in Vercel
-let rawBaseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5001/api').trim().replace(/\/+$/, '');
+const defaultApiUrl = import.meta.env.MODE === 'production'
+  ? 'https://campus-event-system-9di7.onrender.com/api'
+  : 'http://localhost:5001/api';
+
+let rawBaseUrl = (import.meta.env.VITE_API_URL || defaultApiUrl).trim().replace(/\/+$/, '');
 if (!rawBaseUrl.endsWith('/api')) {
   rawBaseUrl += '/api';
 }
