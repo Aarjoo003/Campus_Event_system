@@ -1,6 +1,22 @@
-# Campus Event Management System (CampusEventHub)
+# 🎓 Campus Event Management System (CampusEventHub)
 
-> A modern, production-style, full-stack college event discovery, ticketing, and attendance management platform built from scratch with **React (Vite + Tailwind CSS)**, **Node.js (Express.js REST APIs)**, and **MySQL**.
+> A modern, production-grade, full-stack college event discovery, ticketing, and attendance management platform built with **React (Vite + Tailwind CSS)**, **Node.js (Express.js REST APIs)**, and **Cloud MySQL**.
+
+[![Live App](https://img.shields.io/badge/Live%20Frontend-Vercel-black?style=for-the-badge&logo=vercel)](https://campus-event-system-pi.vercel.app/)
+[![Live API](https://img.shields.io/badge/Live%20Backend-Render-46E3B7?style=for-the-badge&logo=render)](https://campus-event-system-9di7.onrender.com/)
+[![Database](https://img.shields.io/badge/Database-Cloud%20MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://aiven.io/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/Aarjoo003/Campus_Event_system)
+
+---
+
+## 🌐 Live Production Links
+
+| Resource | Live Link | Status | Description |
+| :--- | :--- | :---: | :--- |
+| **Frontend Web App** | [https://campus-event-system-pi.vercel.app/](https://campus-event-system-pi.vercel.app/) | ![Operational](https://img.shields.io/badge/Status-Live-success) | Hosted on **Vercel** with global CDN and automated CI/CD deployment. |
+| **Backend REST API** | [https://campus-event-system-9di7.onrender.com/](https://campus-event-system-9di7.onrender.com/) | ![Operational](https://img.shields.io/badge/Status-Live-success) | Hosted on **Render** (Node.js/Express) with SSL & health monitoring. |
+| **API Health Check** | [https://campus-event-system-9di7.onrender.com/api/health](https://campus-event-system-9di7.onrender.com/api/health) | ![Operational](https://img.shields.io/badge/Status-200%20OK-brightgreen) | Real-time service uptime, version `1.0.1`, and status check. |
+| **Cloud Database** | Cloud MySQL Cluster | ![Operational](https://img.shields.io/badge/Status-Connected-blue) | Managed MySQL 8.0/9.x cluster with SSL encryption and automated backups. |
 
 ---
 
@@ -343,104 +359,118 @@ All demo accounts are seeded with password: **`password123`**
 
 ---
 
-## 10. Step-by-Step MySQL Setup (By Yourself)
+## 10. Production Deployment & Cloud Architecture
 
-You can set up the database using either **Method A (Automated Node runner)** or **Method B (MySQL Workbench / CLI)**:
+The system is deployed using modern cloud infrastructure:
 
-### ⚙️ Step 1: Verify / Edit MySQL Credentials in `.env`
-Open `backend/.env` in VS Code and ensure `DB_USER` and `DB_PASSWORD` match your local MySQL installation:
+```
+┌─────────────────────────────────┐        ┌─────────────────────────────────┐
+│         Vercel (Frontend)       │        │         Render (Backend)        │
+│   campus-event-system-pi.vercel.app  │ ◄────► │ campus-event-system-9di7.onrender.com │
+└─────────────────────────────────┘        └────────────────┬────────────────┘
+                                                            │ SSL / TLS (Port 3306)
+                                                            ▼
+                                           ┌─────────────────────────────────┐
+                                           │       Aiven Cloud MySQL         │
+                                           │        (defaultdb Cluster)      │
+                                           └─────────────────────────────────┘
+```
+
+### 🌍 Cloud Hosting Summary:
+1. **Frontend (Vercel)**:
+   - Built with Vite & React, hosted on Vercel's Edge Network for sub-second global page loads.
+   - SPA client-side routing handled via `vercel.json` rewrite rules.
+   - Automatic API proxying and fallback to the live Render backend API.
+2. **Backend REST API (Render)**:
+   - Node.js Express server running with connection pooling, CORS credentials, and helmet security headers.
+   - Dual-mount routing (`/api/*` and direct route aliases) ensures zero breaking changes across clients.
+   - Live health checks at `/api/health` reporting uptime and version `1.0.1`.
+3. **Database (Aiven Cloud MySQL)**:
+   - High-availability managed MySQL 8.0/9.x database cluster.
+   - End-to-end TLS/SSL encrypted connection pool using `mysql2/promise`.
+   - Seeded with 12 real-world campus events across 6 distinct categories and campus venues.
+
+---
+
+## 11. Environment Configuration & Setup Guide
+
+### ⚙️ Environment Variables Template (`backend/.env.example`)
+To configure the application for deployment or local execution, create a `.env` file in the `backend/` directory based on the template:
 
 ```env
-PORT=5000
-NODE_ENV=development
+# Application Server Port
+PORT=5001
+NODE_ENV=production
 
-DB_HOST=127.0.0.1
+# Database Connection (Cloud MySQL or Local Instance)
+DB_HOST=your_mysql_host
 DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=root
-DB_NAME=campus_events_db
+DB_USER=your_mysql_username
+DB_PASSWORD=your_mysql_password
+DB_NAME=your_database_name
+DB_SSL=true
 
-JWT_SECRET=super_secret_jwt_key_campus_events_2026_jwt_token
+# JWT Authentication
+JWT_SECRET=your_secure_jwt_secret_key
 JWT_EXPIRES_IN=7d
-FRONTEND_URL=http://localhost:5173
+
+# Allowed Frontend Origin (for CORS)
+FRONTEND_URL=https://campus-event-system-pi.vercel.app
 ```
 
 ---
 
-### Method A: Automated One-Command Initialization (Recommended)
-Open a terminal inside `backend/` and run:
+### 🗄️ Database Initialization
+To initialize the database schema and populate seed data:
 
 ```powershell
 cd backend
 npm run db:init
 ```
 
-This script will automatically:
-1. Connect to your MySQL server.
-2. Create the `campus_events_db` database.
-3. Run `backend/database/schema.sql` (creating all 6 tables and relationships).
-4. Run `backend/database/seed.sql` (inserting categories, venues, events, accounts, registrations, and attendance).
+The script will automatically:
+1. Establish a secure connection with the configured MySQL instance.
+2. Execute `backend/database/schema.sql` to build 3NF relational tables and constraints.
+3. Execute `backend/database/seed.sql` to populate categories, venues, accounts, and demo events.
 
 ---
 
-### Method B: Manual Setup via MySQL Workbench or Command Line
-If you prefer executing the SQL scripts directly:
+### 🚀 Running the Services
 
-1. **Open MySQL Workbench** (or `mysql -u root -p`).
-2. Open and execute:
-   ```text
-   backend/database/schema.sql
-   ```
-   *(This creates the database `campus_events_db` and all relational tables).*
-3. Next, open and execute:
-   ```text
-   backend/database/seed.sql
-   ```
-   *(This populates all 12 events, venues, users, bookings, and attendance records).*
-
----
-
-## 11. How to Run the Application
-
-### 🚀 Step 1: Start Backend Server
-Open a terminal in the project directory:
-
+#### 1. Backend Service
 ```powershell
 cd backend
 npm start
 ```
-*The Express server will start on **`http://localhost:5000`**.*
-You can verify it by opening `http://localhost:5000/api/health` in your browser.
+*The Express server initializes the database pool and starts listening on the designated `PORT`.*  
+Verify the service status by accessing `/api/health`.
 
----
-
-### 💻 Step 2: Start Frontend Development Server
-Open a second terminal in the project directory:
-
+#### 2. Frontend Application
 ```powershell
 cd frontend
 npm run dev
 ```
-*The Vite React development server will start on **`http://localhost:5173`**.*
-
-Now open **`http://localhost:5173`** in your browser to explore the platform!
+*Vite compiles and serves the application with instant Hot Module Replacement (HMR).*  
+Access the web application in your browser to experience the live platform!
 
 ---
 
 ## 12. Postman Collection Testing
 
-We have included a pre-configured Postman collection at:
-`postman/Campus_Event_System.postman_collection.json`
+A pre-configured Postman collection is included at:  
+📂 `postman/Campus_Event_System.postman_collection.json`
+
+* **Default Base URL:** `https://campus-event-system-9di7.onrender.com` (configured to test against the live cloud backend out of the box).
 
 ### How to test:
 1. Open **Postman**.
-2. Click **Import** and select `Campus_Event_System.postman_collection.json`.
-3. The collection is organized into 4 folders:
+2. Click **Import** and select `postman/Campus_Event_System.postman_collection.json`.
+3. The collection is organized into 4 modular folders:
    - **Authentication**: Register, Student Login, Organizer Login, Admin Login, Get Current User, Update Profile.
    - **Events**: Filter/Search Events, Get Metadata, View Event Details, Create Event, Update Event, Delete Event.
    - **Registrations & Attendance**: Register for Event, Cancel Registration, My Events, Get Event Registrations, Mark Attendance.
    - **Admin Operations**: System Dashboard, Manage Users, Update User Role, Moderate Event Status.
-4. When you execute any of the login requests (**Student Login**, **Organizer Login**, or **Admin Login**), the test script **automatically saves the returned JWT token** into the collection variable `token`. Subsequent protected requests use this token automatically!
+4. When you execute any login request (**Student Login**, **Organizer Login**, or **Admin Login**), the test script **automatically captures the JWT token** and stores it in the collection variable `token` for subsequent authenticated calls.
 
 ---
 
