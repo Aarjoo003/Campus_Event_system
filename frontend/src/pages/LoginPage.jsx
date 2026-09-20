@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Calendar, Lock, Mail, AlertCircle, ArrowRight, Sparkles } from 'lucide-react';
+import { Calendar, Lock, Mail, AlertCircle, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -12,13 +12,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Demo credential autofill helper
-  const handleQuickFill = (roleEmail) => {
-    setEmail(roleEmail);
-    setPassword('password123');
-    setError('');
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -65,37 +58,6 @@ export default function LoginPage() {
           <p className="mt-2 text-xs sm:text-sm text-slate-500">
             Sign in to access your campus event portal and registrations
           </p>
-        </div>
-
-        {/* Quick Demo Login Picker */}
-        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-          <div className="flex items-center space-x-1.5 text-xs font-bold text-slate-600 mb-2.5">
-            <Sparkles className="w-3.5 h-3.5 text-brand-600" />
-            <span>Quick Demo Logins (Password: password123)</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => handleQuickFill('student1@campus.edu')}
-              className="py-1.5 px-2 bg-white hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 shadow-sm transition-colors text-center"
-            >
-              Student
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('tech.club@campus.edu')}
-              className="py-1.5 px-2 bg-white hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 shadow-sm transition-colors text-center"
-            >
-              Organizer
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('admin@campus.edu')}
-              className="py-1.5 px-2 bg-white hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 shadow-sm transition-colors text-center"
-            >
-              Admin
-            </button>
-          </div>
         </div>
 
         {/* Error Alert */}
